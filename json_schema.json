@@ -1,0 +1,201 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ClientIntelligenceReport",
+  "description": "FUME Client Intelligence Report extracted from conversational logs between coach and client.",
+  "type": "OBJECT",
+  "properties": {
+    "report_metadata": {
+      "type": "OBJECT",
+      "properties": {
+        "client_id": { "type": "STRING" },
+        "start_day": { "type": "INTEGER", "minimum": 1 },
+        "end_day": { "type": "INTEGER", "minimum": 1 },
+        "review_status": {
+          "type": "STRING",
+          "enum": ["Pending", "Approved", "Rejected"]
+        }
+      },
+      "required": ["client_id", "start_day", "end_day", "review_status"]
+    },
+    "weekly_summary": {
+      "type": "OBJECT",
+      "properties": {
+        "text": { "type": "STRING" },
+        "last_updated_by": { "type": "STRING" }
+      },
+      "required": ["text"]
+    },
+    "nutrition_adherence": {
+      "type": "OBJECT",
+      "properties": {
+        "adherence_rating": { "type": "STRING", "enum": ["High", "Moderate", "Low"] },
+        "notes": { "type": "STRING" },
+        "meals_logged": {
+          "type": "ARRAY",
+          "items": {
+            "type": "OBJECT",
+            "properties": {
+              "day": { "type": "INTEGER" },
+              "breakfast": { "type": "STRING" },
+              "lunch": { "type": "STRING" },
+              "dinner": { "type": "STRING" },
+              "snacks": { "type": "STRING" },
+              "supplements_taken": { "type": "BOOLEAN" }
+            },
+            "required": ["day"]
+          }
+        }
+      },
+      "required": ["adherence_rating", "notes"]
+    },
+    "exercise_and_steps": {
+      "type": "OBJECT",
+      "properties": {
+        "average_daily_steps": { "type": "NUMBER" },
+        "daily_records": {
+          "type": "ARRAY",
+          "items": {
+            "type": "OBJECT",
+            "properties": {
+              "day": { "type": "INTEGER" },
+              "steps": { "type": ["INTEGER", "NULL"] },
+              "exercise_duration_mins": { "type": ["INTEGER", "NULL"] },
+              "exercise_type": { "type": ["STRING", "NULL"] }
+            },
+            "required": ["day"]
+          }
+        }
+      },
+      "required": ["daily_records"]
+    },
+    "sleep_and_water": {
+      "type": "OBJECT",
+      "properties": {
+        "daily_sleep_hours": {
+          "type": "ARRAY",
+          "items": {
+            "type": "OBJECT",
+            "properties": {
+              "day": { "type": "INTEGER" },
+              "hours": { "type": ["NUMBER", "NULL"] },
+              "quality": { "type": ["STRING", "NULL"] }
+            },
+            "required": ["day"]
+          }
+        },
+        "daily_water_litres": {
+          "type": "ARRAY",
+          "items": {
+            "type": "OBJECT",
+            "properties": {
+              "day": { "type": "INTEGER" },
+              "litres": { "type": ["NUMBER", "NULL"] }
+            },
+            "required": ["day"]
+          }
+        }
+      },
+      "required": ["daily_sleep_hours", "daily_water_litres"]
+    },
+    "stress_and_symptoms": {
+      "type": "OBJECT",
+      "properties": {
+        "overall_stress_level": { "type": "STRING", "enum": ["Low", "Moderate", "High"] },
+        "symptoms_reported": {
+          "type": "ARRAY",
+          "items": { "type": "STRING" }
+        },
+        "notes": { "type": "STRING" }
+      },
+      "required": ["overall_stress_level", "symptoms_reported", "notes"]
+    },
+    "engagement_level": {
+      "type": "OBJECT",
+      "properties": {
+        "score": { "type": "INTEGER", "minimum": 1, "maximum": 10 },
+        "qualitative_assessment": { "type": "STRING" }
+      },
+      "required": ["score", "qualitative_assessment"]
+    },
+    "barriers_and_actions": {
+      "type": "OBJECT",
+      "properties": {
+        "key_barriers": {
+          "type": "ARRAY",
+          "items": { "type": "STRING" }
+        },
+        "pending_actions": {
+          "type": "ARRAY",
+          "items": {
+            "type": "OBJECT",
+            "properties": {
+              "id": { "type": "STRING" },
+              "action_description": { "type": "STRING" },
+              "owner": { "type": "STRING", "enum": ["Client", "Coach"] },
+              "status": { "type": "STRING", "enum": ["Open", "Resolved"] }
+            },
+            "required": ["id", "action_description", "owner", "status"]
+          }
+        }
+      },
+      "required": ["key_barriers", "pending_actions"]
+    },
+    "risk_analysis": {
+      "type": "OBJECT",
+      "properties": {
+        "attention_flags": {
+          "type": "ARRAY",
+          "items": {
+            "type": "OBJECT",
+            "properties": {
+              "severity": { "type": "STRING", "enum": ["HIGH", "MEDIUM", "LOW"] },
+              "flag_title": { "type": "STRING" },
+              "description": { "type": "STRING" }
+            },
+            "required": ["severity", "flag_title", "description"]
+          }
+        },
+        "recommended_coach_actions": {
+          "type": "ARRAY",
+          "items": { "type": "STRING" }
+        }
+      },
+      "required": ["attention_flags", "recommended_coach_actions"]
+    },
+    "grounded_evidence": {
+      "type": "ARRAY",
+      "items": {
+        "type": "OBJECT",
+        "properties": {
+          "id": { "type": "STRING" },
+          "source_day": { "type": "INTEGER" },
+          "type_classification": {
+            "type": "STRING",
+            "enum": [
+              "Confirmed Fact",
+              "Client-Reported Information",
+              "AI-Generated Inference",
+              "Missing / Unavailable Information"
+            ]
+          },
+          "extracted_finding": { "type": "STRING" },
+          "exact_quote": { "type": ["STRING", "NULL"] },
+          "rational_inference": { "type": ["STRING", "NULL"] }
+        },
+        "required": ["id", "source_day", "type_classification", "extracted_finding"]
+      }
+    }
+  },
+  "required": [
+    "report_metadata",
+    "weekly_summary",
+    "nutrition_adherence",
+    "exercise_and_steps",
+    "sleep_and_water",
+    "stress_and_symptoms",
+    "engagement_level",
+    "barriers_and_actions",
+    "risk_analysis",
+    "grounded_evidence"
+  ]
+}
