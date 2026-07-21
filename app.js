@@ -123,7 +123,7 @@ const transcriptData = [
 // 2. Extracted Client Intelligence State
 const clientState = {
     weekly_summary: "The client is experiencing energy fluctuations and gut discomfort (acidity, bloating) triggered by a demanding school and work schedule, leading to poor sleep hygiene (5-5.5 hrs average) and erratic meal planning. Positive indicators include immediate energy recovery when sleep is stabilized (8 hrs on Day 8), adherence to water intake targets (3.5-4L), and responsiveness to coach instructions (implementing ACV, chewing slowly, and starting movement habits). Current metrics show weight at 83kg.",
-    
+
     risk_flags: [
         { severity: "HIGH", title: "Extreme Fatigue & Microsleeps", desc: "Client reported falling asleep on the table during a meeting on Day 7 due to office pressure and severe sleep debt." },
         { severity: "MEDIUM", title: "Nutritional Under-fueling", desc: "Eating nearly half of baseline volume (Day 5), skipping evening meals (Day 2), and missing breakfast protein (Days 5 & 6)." },
@@ -235,11 +235,11 @@ function initTabs() {
         btn.addEventListener("click", () => {
             tabButtons.forEach(b => b.classList.remove("active"));
             document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
-            
+
             btn.classList.add("active");
             const targetTab = btn.getAttribute("data-tab");
             document.getElementById(`tab-${targetTab}`).classList.add("active");
-            
+
             // Re-render charts to compute correct element widths if tab trackers is active
             if (targetTab === 'trackers') {
                 setTimeout(renderCharts, 50);
@@ -270,7 +270,7 @@ function renderTranscript() {
             bubble.className = `chat-bubble ${msg.sender === 'Client' ? 'bubble-client' : 'bubble-coach'}`;
             // Add identifying attributes for grounding highlights
             bubble.setAttribute("data-day", dayLog.day);
-            
+
             bubble.innerHTML = `
                 <span class="bubble-sender">${msg.sender}</span>
                 <span class="bubble-message-text">${msg.text}</span>
@@ -279,6 +279,7 @@ function renderTranscript() {
         });
     });
 }
+
 
 // 7. Render Overview Tab
 function renderOverview() {
@@ -352,9 +353,9 @@ function drawSVGLineChart(containerId, data, dataKey, yRange, unit, strokeColor)
     const width = container.clientWidth || 250;
     const height = 160;
     const padding = 25;
-    
+
     let svg = `<svg width="${width}" height="${height}" style="overflow: visible;">`;
-    
+
     // Draw grid lines
     const gridCount = 4;
     for (let i = 0; i <= gridCount; i++) {
@@ -370,7 +371,7 @@ function drawSVGLineChart(containerId, data, dataKey, yRange, unit, strokeColor)
     const colWidth = (width - 2 * padding) / 7;
     for (let i = 0; i < 8; i++) {
         const x = padding + (i * colWidth);
-        svg += `<text x="${x}" y="${height - 8}" fill="#6B7280" font-size="9" text-anchor="middle">D${i+1}</text>`;
+        svg += `<text x="${x}" y="${height - 8}" fill="#6B7280" font-size="9" text-anchor="middle">D${i + 1}</text>`;
     }
 
     // Map data points
@@ -399,7 +400,7 @@ function drawSVGLineChart(containerId, data, dataKey, yRange, unit, strokeColor)
         if (p.classification.includes("Reported")) {
             dotColor = "var(--color-reported)"; // Client Reported
         }
-        
+
         svg += `
             <circle cx="${p.x}" cy="${p.y}" r="4.5" fill="${dotColor}" stroke="#060911" stroke-width="1.5" style="cursor: pointer;" title="Day ${p.day}: ${p.val}${unit} (${p.classification})" />
             <circle cx="${p.x}" cy="${p.y}" r="8" fill="transparent" style="cursor: pointer;" onclick="scrollToDay(${p.day})" />
@@ -427,9 +428,9 @@ function drawSVGBarChart(containerId, data, dataKey, yRange, unit, fillColor) {
     const width = container.clientWidth || 250;
     const height = 160;
     const padding = 30;
-    
+
     let svg = `<svg width="${width}" height="${height}" style="overflow: visible;">`;
-    
+
     // Draw grid lines
     const gridCount = 4;
     for (let i = 0; i <= gridCount; i++) {
@@ -446,14 +447,14 @@ function drawSVGBarChart(containerId, data, dataKey, yRange, unit, fillColor) {
     data.forEach((d, idx) => {
         const x = padding + (idx * colWidth) + (colWidth / 4);
         const barW = colWidth / 2;
-        
-        svg += `<text x="${x + barW/2}" y="${height - 8}" fill="#6B7280" font-size="9" text-anchor="middle">D${d.day}</text>`;
-        
+
+        svg += `<text x="${x + barW / 2}" y="${height - 8}" fill="#6B7280" font-size="9" text-anchor="middle">D${d.day}</text>`;
+
         if (d[dataKey] !== null) {
             const ratio = (d[dataKey] - yRange[0]) / (yRange[1] - yRange[0]);
             const barH = ratio * (height - 2 * padding);
             const y = height - padding - barH;
-            
+
             let barColor = fillColor;
             if (d.classification.includes("Reported")) {
                 barColor = "var(--color-reported)";
@@ -467,7 +468,7 @@ function drawSVGBarChart(containerId, data, dataKey, yRange, unit, fillColor) {
         } else {
             // Missing label
             svg += `
-                <circle cx="${x + barW/2}" cy="${height - padding - 8}" r="2" fill="var(--color-missing)" />
+                <circle cx="${x + barW / 2}" cy="${height - padding - 8}" r="2" fill="var(--color-missing)" />
             `;
         }
     });
@@ -477,10 +478,10 @@ function drawSVGBarChart(containerId, data, dataKey, yRange, unit, fillColor) {
 }
 
 // Scroll raw transcript pane to specific day
-window.scrollToDay = function(dayNumber) {
+window.scrollToDay = function (dayNumber) {
     const container = document.getElementById("transcript-container");
     const dayDividers = document.querySelectorAll(".day-separator-text");
-    
+
     let targetDivider = null;
     dayDividers.forEach(el => {
         if (el.textContent.includes(`DAY ${dayNumber}`)) {
@@ -490,7 +491,7 @@ window.scrollToDay = function(dayNumber) {
 
     if (targetDivider) {
         container.scrollTop = targetDivider.offsetTop - 20;
-        
+
         // Temporarily highlight all bubbles of this day
         const bubbles = document.querySelectorAll(`.chat-bubble[data-day="${dayNumber}"]`);
         bubbles.forEach(b => {
@@ -541,7 +542,7 @@ function renderTaxonomy() {
     clientState.grounded_evidence.forEach(ev => {
         const tr = document.createElement("tr");
         tr.setAttribute("data-evidence-id", ev.id);
-        
+
         let badgeClass = "cat-fact";
         if (ev.type.includes("Reported")) badgeClass = "cat-reported";
         else if (ev.type.includes("Inference")) badgeClass = "cat-inference";
@@ -555,7 +556,7 @@ function renderTaxonomy() {
                 ${ev.quote ? `<button class="btn-evidence" onclick="highlightEvidence('${ev.id}', ${ev.day}, '${escapeQuote(ev.quote)}')">Focus Evidence</button>` : `<span style="color: var(--color-text-muted); font-style: italic;">No quote (Gaps)</span>`}
             </td>
         `;
-        
+
         // Row interaction hooks
         tr.addEventListener("click", () => {
             document.querySelectorAll(".taxonomy-table tbody tr").forEach(row => row.classList.remove("active-taxonomy-row"));
@@ -572,9 +573,9 @@ function escapeQuote(str) {
 }
 
 // Highlights specific dialogue text bubbles matching the grounded evidence
-window.highlightEvidence = function(evidenceId, day, quoteSnippet) {
+window.highlightEvidence = function (evidenceId, day, quoteSnippet) {
     window.scrollToDay(day);
-    
+
     if (!quoteSnippet) return;
 
     // Find bubble matching the text
@@ -617,7 +618,7 @@ function renderBarriersAndActions() {
         `;
         editBarriersContainer.appendChild(row);
     });
-    
+
     const addBarrierBtn = document.createElement("button");
     addBarrierBtn.className = "btn-add-item";
     addBarrierBtn.textContent = "+ Add Barrier";
@@ -663,7 +664,7 @@ function renderBarriersAndActions() {
 }
 
 // Editable Modifiers
-window.deleteBarrier = function(index) {
+window.deleteBarrier = function (index) {
     clientState.barriers.splice(index, 1);
     renderBarriersAndActions();
     renderReviewJSON();
@@ -675,7 +676,7 @@ function addBarrier() {
     renderReviewJSON();
 }
 
-window.deletePendingAction = function(index) {
+window.deletePendingAction = function (index) {
     clientState.pending_actions.splice(index, 1);
     renderBarriersAndActions();
     renderReviewJSON();
@@ -702,7 +703,7 @@ function saveEditedPending() {
         const descInp = row.querySelector(`[data-desc-index="${index}"]`);
         const ownerSel = row.querySelector(`[data-owner-index="${index}"]`);
         const statusSel = row.querySelector(`[data-status-index="${index}"]`);
-        
+
         if (descInp && ownerSel && statusSel) {
             clientState.pending_actions[index] = {
                 desc: descInp.value,
@@ -760,7 +761,7 @@ function renderReviewJSON() {
         barriers_and_actions: {
             key_barriers: clientState.barriers,
             pending_actions: clientState.pending_actions.map((act, idx) => ({
-                id: `act-${idx+1}`,
+                id: `act-${idx + 1}`,
                 action_description: act.desc,
                 owner: act.owner,
                 status: act.status
@@ -867,7 +868,7 @@ function initActionListeners() {
         globalBadge.className = "status-badge status-approved";
         globalBadge.querySelector(".status-text").textContent = "Report APPROVED";
         exportSection.classList.remove("hidden");
-        
+
         // Scroll to the export details
         setTimeout(() => {
             exportSection.scrollIntoView({ behavior: 'smooth' });
